@@ -1,0 +1,32 @@
+{
+    "name": "daily-you",
+    "version": "1.0.0",
+    "description": "",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "dev": "nodemon index.js"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "dependencies": {
+        "axios": "^0.24.0",
+        "compression": "^1.7.4",
+        "cors": "^2.8.5",
+        "crypto-js": "^4.1.1",
+        "dotenv": "^10.0.0",
+        "express": "^4.17.1",
+        "express-session": "^1.17.2",
+        "passport": "^0.5.0",
+        "passport-local": "^1.0.0",
+        "pg": "^8.7.1",
+        "pg-hstore": "^2.3.4",
+        "qs": "^6.10.1",
+        "sequelize": "^6.9.0",
+        "validator": "^13.7.0"
+    },
+    "devDependencies": {
+        "nodemon": "^2.0.15"
+    }
+}
