@@ -1,3 +1,4 @@
+import axios from 'axios';
 import React, { useState } from 'react';
 import {
   ImageBackground,
@@ -5,8 +6,10 @@ import {
   View,
   Text,
   TextInput,
+  Alert,
 } from 'react-native';
 import { CustomButton } from '../components/CustomButton';
+import { BACKEND_URL } from '../constants';
 import { SignUp } from './signup.screen';
 
 const styles = StyleSheet.create({
@@ -62,6 +65,22 @@ const Landing = ({ login }) => {
 
   if (screen === 'SignUp') return <SignUp goBack={() => setScreen('Login')} />;
 
+  const doLogin = async () => {
+    const data = { phone, password };
+    try {
+      const response = await axios.post(BACKEND_URL + 'auth/login', data);
+      const { data: respData } = response;
+      const { user, token } = respData;
+      login(user, token);
+    } catch (err) {
+      Alert.alert('', 'Invalid Phone Number and Password.', [
+        {
+          text: 'Ok',
+        },
+      ]);
+    }
+  };
+
   return (
     <>
       <View style={styles.container}>
@@ -95,7 +114,7 @@ const Landing = ({ login }) => {
           </Text>
         </View>
         <View style={styles.actionArea}>
-          <CustomButton text="Login" type="primary" fnc={login} />
+          <CustomButton text="Login" type="primary" fnc={doLogin} />
           <CustomButton
             text="Sign Up"
             type="secondary"

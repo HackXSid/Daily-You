@@ -10,14 +10,27 @@
     "lint": "eslint ."
   },
   "dependencies": {
+    "@react-native-async-storage/async-storage": "^1.15.11",
     "@react-native-picker/picker": "^2.2.0",
+    "@react-navigation/bottom-tabs": "^6.0.9",
+    "@react-navigation/native": "^6.0.6",
+    "axios": "^0.24.0",
     "react": "17.0.2",
     "react-native": "0.66.3",
+    "react-native-calendars": "^1.1268.0",
     "react-native-date-picker": "^4.1.1",
+    "react-native-elements": "^3.4.2",
     "react-native-picker-select": "^8.0.4",
     "react-native-really-awesome-button": "^1.6.0",
+    "react-native-safe-area-context": "^3.3.2",
+    "react-native-screens": "^3.9.0",
     "react-native-textinput-effects": "^0.6.2",
-    "react-native-vector-icons": "^9.0.0"
+    "react-native-vector-icons": "^9.0.0",
+    "react-redux": "^7.2.6",
+    "redux": "^4.1.2",
+    "redux-logger": "^3.0.6",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^2.4.0"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

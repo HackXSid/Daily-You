@@ -1,24 +1,40 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { SafeAreaView } from 'react-native';
+import { Provider, useSelector, useDispatch } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react';
+import { loginFunc, logoutFunc } from './redux/actions/authentication.actions';
+import { store, persistor } from './redux/stores';
 import { Landing } from './screens/landing.screen';
+import { DailyYouScreen } from './screens/daily_you.screen';
 
-const DEFAULT_STATE = {
-  user: null,
+const Main = () => {
+  return (
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
+  );
 };
 
 const App = () => {
-  const [authInfo, setAuthInfo] = useState(DEFAULT_STATE);
+  const authReducer = useSelector(state => state.authenticationReducer);
+  const dispatch = useDispatch();
 
   const logout = () => {
-    setAuthInfo(DEFAULT_STATE);
+    dispatch(logoutFunc());
   };
 
-  const login = user => {
-    setAuthInfo({ ...authInfo, user });
+  const login = (user, token) => {
+    dispatch(loginFunc(user, token));
   };
 
-  if (authInfo.user) {
-    // Logged In
+  if (authReducer.isAuthenticated) {
+    return (
+      <SafeAreaView>
+        <DailyYouScreen logout={logout} />
+      </SafeAreaView>
+    );
   } else {
     return (
       <SafeAreaView>
@@ -27,4 +43,4 @@ const App = () => {
     );
   }
 };
-export default App;
+export default Main;

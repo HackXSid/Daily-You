@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import RNPickerSelect from 'react-native-picker-select';
+import axios from 'axios';
 import {
   ScrollView,
   View,
@@ -7,10 +8,12 @@ import {
   TouchableOpacity,
   StyleSheet,
   TextInput,
+  Alert,
 } from 'react-native';
 import AntDesign from 'react-native-vector-icons/AntDesign';
 import DatePicker from 'react-native-date-picker';
 import { CustomButton } from '../components/CustomButton';
+import { BACKEND_URL } from '../constants';
 
 const pickerSelectStyles = StyleSheet.create({
   inputIOS: {
@@ -90,7 +93,30 @@ const SignUp = ({ goBack }) => {
   const [emergency_phone_number, setEmergencyPhoneNumber] = useState('');
   const [open, setOpen] = useState(false);
 
-  const register = () => {};
+  const register = async () => {
+    const data = {
+      phone_number: phone,
+      password,
+      name,
+      dob,
+      gender,
+      address,
+      emergency_phone_number,
+      ethnicity,
+      race,
+      marital,
+    };
+    try {
+      const response = await axios.post(BACKEND_URL + 'auth/register', data);
+      const { data: respData } = response;
+    } catch (err) {
+      Alert.alert('', 'This phone number has already been registered.', [
+        {
+          text: 'Ok',
+        },
+      ]);
+    }
+  };
 
   return (
     <ScrollView style={{ minHeight: '100%' }}>

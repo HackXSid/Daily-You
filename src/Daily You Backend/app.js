@@ -4,6 +4,8 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 
 const { sanitiseInput } = require("./utils/sanitise");
+const { router: authRouter } = require("./routes/auth.route");
+const passport = require("./constants/passportConfig");
 
 const app = express();
 
@@ -26,6 +28,10 @@ app.use(cors(corsOptions));
 app.use(compression());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
+app.use(passport.initialize());
+
+app.use("/api", passport.authenticate("jwt", { session: false }));
+app.use("/auth", authRouter);
 
 /* eslint-disable no-unused-vars */
 app.use(function (err, _req, res, _next) {
