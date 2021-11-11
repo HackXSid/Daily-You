@@ -1,0 +1,11 @@
+.successClass {
+  border: 2px solid lightgreen !important;
+}
+
+.errorClass {
+  border: 2px solid red !important;
+}
+
+.warningClass {
+  border: 2px solid burlywood !important;
+}
