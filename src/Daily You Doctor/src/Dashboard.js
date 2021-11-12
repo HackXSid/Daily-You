@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import Card from "@mui/material/Card";
+import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
 const mock1 = [
@@ -164,6 +165,7 @@ const mock = [
 ];
 
 export const Dashboard = () => {
+  let navigate = useNavigate();
   const [patients, setPatients] = useState([]);
   const [prescriptions, setPrescriptions] = useState([]);
 
@@ -181,7 +183,7 @@ export const Dashboard = () => {
   }, []);
 
   const getPrescriptions = () => {
-    return prescriptions.map((prescription) => {
+    return prescriptions.map((prescription, index) => {
       return (
         <Card variant="outlined" style={{ width: 360, margin: 10 }} raised>
           <CardContent>
@@ -200,7 +202,9 @@ export const Dashboard = () => {
               View Prescription
             </Button>
             <Button size="small">Expire</Button>
-            <Button size="small">View Profile</Button>
+            <Button size="small" onClick={() => navigate(`/users/${index}`)}>
+              View Profile
+            </Button>
           </CardActions>
         </Card>
       );
@@ -208,7 +212,7 @@ export const Dashboard = () => {
   };
 
   const getCards = () => {
-    return patients.map((patient) => {
+    return patients.map((patient, index) => {
       let status = "success";
       if (
         patient.medicines.filter((medicine) => medicine.status === -1).length >
@@ -265,7 +269,11 @@ export const Dashboard = () => {
             </div>
           </CardContent>
           <CardActions>
-            <Button size="small" variant="contained">
+            <Button
+              size="small"
+              variant="contained"
+              onClick={() => navigate(`/users/${index}`)}
+            >
               View Profile
             </Button>
             <Button size="small">Issue Prescription</Button>

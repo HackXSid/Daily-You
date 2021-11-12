@@ -8,6 +8,7 @@ import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
+import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
 const mock1 = [
@@ -84,6 +85,7 @@ const mock1 = [
 ];
 
 export const AllPrescriptions = () => {
+  let navigate = useNavigate();
   const [prescriptions, setPrescriptions] = useState([]);
 
   const fetchPrescriptions = async () => {
@@ -95,7 +97,7 @@ export const AllPrescriptions = () => {
   }, []);
 
   const getPrescriptions = () => {
-    return prescriptions.map((prescription) => {
+    return prescriptions.map((prescription, index) => {
       return (
         <Card variant="outlined" style={{ width: 360, margin: 10 }} raised>
           <CardContent>
@@ -114,7 +116,9 @@ export const AllPrescriptions = () => {
               View Prescription
             </Button>
             <Button size="small">Expire</Button>
-            <Button size="small">View Profile</Button>
+            <Button size="small" onClick={() => navigate(`/users/${index}`)}>
+              View Profile
+            </Button>
           </CardActions>
         </Card>
       );

@@ -9,6 +9,7 @@ import Card from "@mui/material/Card";
 import Box from "@mui/material/Box";
 import TextField from "@mui/material/TextField";
 import SearchIcon from "@mui/icons-material/Search";
+import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
 const mock = [
@@ -243,6 +244,7 @@ const mock = [
 ];
 
 export const AllPatients = () => {
+  let navigate = useNavigate();
   const [patients, setPatients] = useState([]);
 
   const fetchPatients = async () => {
@@ -254,7 +256,7 @@ export const AllPatients = () => {
   }, []);
 
   const getCards = () => {
-    return patients.map((patient) => {
+    return patients.map((patient, index) => {
       let status = "success";
       if (
         patient.medicines.filter((medicine) => medicine.status === -1).length >
@@ -311,7 +313,11 @@ export const AllPatients = () => {
             </div>
           </CardContent>
           <CardActions>
-            <Button size="small" variant="contained">
+            <Button
+              size="small"
+              variant="contained"
+              onClick={() => navigate(`/users/${index}`)}
+            >
               View Profile
             </Button>
             <Button size="small">Issue Prescription</Button>

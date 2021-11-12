@@ -33,7 +33,7 @@ const drawerWidth = 240;
 function ResponsiveDrawer(props) {
   let navigate = useNavigate();
 
-  const { window, children } = props;
+  const { window, children, logout } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
@@ -86,7 +86,7 @@ function ResponsiveDrawer(props) {
               </ListItemIcon>
               <ListItemText primary="Privacy" />
             </ListItemButton>
-            <ListItemButton sx={{ pl: 4 }}>
+            <ListItemButton sx={{ pl: 4 }} onClick={logout}>
               <ListItemIcon>
                 <LogoutIcon />
               </ListItemIcon>
