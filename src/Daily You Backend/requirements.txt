@@ -1,0 +1,2 @@
+datefinder==0.7.1
+nltk==3.6.5
