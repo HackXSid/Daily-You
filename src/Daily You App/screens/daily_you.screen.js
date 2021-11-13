@@ -4,10 +4,11 @@ import { NavigationContainer } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Dashboard } from './dashboard.screen';
+import { Settings } from './settings.screen';
+import { DoseCalendar } from './calendar.screen';
+import { Prescription } from './prescription.screen';
 
 const Tab = createBottomTabNavigator();
-
-const Temp = () => <Text>Hi</Text>;
 
 const DailyYouScreen = ({ logout }) => {
   return (
@@ -21,6 +22,7 @@ const DailyYouScreen = ({ logout }) => {
               tabBarIcon: ({ color, size }) => (
                 <Ionicons name="home" color={color} size={size} />
               ),
+              title: 'Daily You',
             }}>
             {props => <Dashboard {...props} />}
           </Tab.Screen>
@@ -32,7 +34,7 @@ const DailyYouScreen = ({ logout }) => {
                 <Ionicons name="calendar" color={color} size={size} />
               ),
             }}>
-            {props => <Temp {...props} aadhar />}
+            {props => <DoseCalendar {...props} />}
           </Tab.Screen>
           <Tab.Screen
             name="Prescriptions"
@@ -42,7 +44,7 @@ const DailyYouScreen = ({ logout }) => {
                 <Ionicons name="list" color={color} size={size} />
               ),
             }}>
-            {props => <Temp {...props} logout={logout} />}
+            {props => <Prescription {...props} logout={logout} />}
           </Tab.Screen>
           <Tab.Screen
             name="Settings"
@@ -52,7 +54,7 @@ const DailyYouScreen = ({ logout }) => {
                 <Ionicons name="settings" color={color} size={size} />
               ),
             }}>
-            {props => <Temp {...props} logout={logout} />}
+            {props => <Settings {...props} logout={logout} />}
           </Tab.Screen>
         </Tab.Navigator>
       </NavigationContainer>

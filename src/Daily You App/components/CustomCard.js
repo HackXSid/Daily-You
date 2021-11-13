@@ -1,19 +1,11 @@
 import React from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Card } from 'react-native-elements';
 
-const styles = StyleSheet.create({
-  container: {
-    backgroundColor: '#fff',
-  },
-});
-
-const CustomCard = ({ children }) => {
+export default CustomCard = ({ styleClass, children }) => {
   return (
-    <View style={styles.container}>
-      <Card>{children}</Card>
+    <View>
+      <Card containerStyle={styleClass}>{children}</Card>
     </View>
   );
 };
-
-export { CustomCard };

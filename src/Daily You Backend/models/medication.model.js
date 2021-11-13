@@ -16,6 +16,9 @@ module.exports = (sequelize) => {
     end_date: {
       type: DataTypes.DATEONLY,
     },
+    text: {
+      type: DataTypes.STRING,
+    },
     time: {
       type: DataTypes.ARRAY(DataTypes.STRING),
     },
