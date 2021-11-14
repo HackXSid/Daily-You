@@ -33,7 +33,7 @@ const drawerWidth = 240;
 function ResponsiveDrawer(props) {
   let navigate = useNavigate();
 
-  const { window, children, logout } = props;
+  const { window, children, logout, name } = props;
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [open, setOpen] = React.useState(false);
 
@@ -166,13 +166,13 @@ function ResponsiveDrawer(props) {
               flexDirection: "row",
               position: "absolute",
               right: 20,
-              top: 25,
+              top: 28,
               justifyContent: "center",
               alignItems: "center",
             }}
           >
             <AccountCircleIcon />
-            <h5 style={{ marginLeft: 10 }}>Welcome, Dr. Siddharth</h5>
+            <h5 style={{ marginLeft: 10 }}>Welcome, {name}</h5>
           </div>
         </Toolbar>
       </AppBar>

@@ -59,4 +59,5 @@ for itr, time in enumerate(info[2]):
         print(time)
     else:
         print(time, end=",")
+print(sys.argv[1])
 # sys.stdout.flush()

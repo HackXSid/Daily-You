@@ -1,41 +1,38 @@
 import "./App.css";
 import { Login } from "./Login";
 import { Home } from "./Home";
-import { useState } from "react";
+import { store, persistor } from "./redux/stores";
+import { Provider, useSelector, useDispatch } from "react-redux";
+import { PersistGate } from "redux-persist/integration/react";
+import { loginFunc, logoutFunc } from "./redux/actions/authentication.actions";
+
+const Main = () => {
+  return (
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <App />
+      </PersistGate>
+    </Provider>
+  );
+};
 
 function App() {
-  const [authInfo, setAuthInfo] = useState({
-    isAuthorized: false,
-    user: null,
-    token: "",
-  });
+  const authReducer = useSelector((state) => state.authenticationReducer);
+  const dispatch = useDispatch();
 
-  if (authInfo.isAuthorized) {
-    return (
-      <Home
-        logout={() =>
-          setAuthInfo({
-            isAuthorized: false,
-            user: null,
-            token: "",
-          })
-        }
-      />
-    );
+  const logout = () => {
+    dispatch(logoutFunc());
+  };
+
+  const login = (user, token) => {
+    dispatch(loginFunc(user, token));
+  };
+
+  if (authReducer.isAuthenticated) {
+    return <Home logout={logout} />;
   } else {
-    return (
-      <Login
-        login={(user, token) => {
-          setAuthInfo({
-            ...authInfo,
-            user,
-            token,
-            isAuthorized: true,
-          });
-        }}
-      />
-    );
+    return <Login login={login} />;
   }
 }
 
-export default App;
+export default Main;

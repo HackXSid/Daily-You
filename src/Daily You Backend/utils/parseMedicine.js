@@ -13,6 +13,7 @@ const parseBuffer = (buffer) => {
   const info = splitLines(message);
   const end = new Date(info[0]);
   const med_name = info[1];
+  const string = info[3];
   const times = info[2]
     .split(",")
     .map((time) => new Date("1970-01-01T" + time + ":00Z"));
@@ -20,6 +21,7 @@ const parseBuffer = (buffer) => {
     end,
     med_name,
     times,
+    string,
   };
 };
 

@@ -6,7 +6,6 @@ const router = express.Router();
 router.route("/parseMedicine").get((req, res) => {
   const medicine = req.query.medicine;
   const state = req.query.state;
-  console.log(medicine);
   parseMedicine(medicine, (data) => {
     const info = parseBuffer(data);
     res.send({ info, state });

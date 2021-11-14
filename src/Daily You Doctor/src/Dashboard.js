@@ -1,11 +1,15 @@
 import { Divider } from "@mui/material";
+import axios from "axios";
 import React, { useEffect, useState } from "react";
 import CardContent from "@mui/material/CardContent";
+import DialogActions from "@mui/material/DialogActions";
+import TextField from "@mui/material/TextField";
 import CardActions from "@mui/material/CardActions";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import Card from "@mui/material/Card";
+import Dialog from "@mui/material/Dialog";
 import { useNavigate } from "react-router-dom";
 import "./Dashboard.css";
 
@@ -164,10 +168,34 @@ const mock = [
   },
 ];
 
-export const Dashboard = () => {
+export const Dashboard = ({ token }) => {
+  Date.prototype.addHours = function (h) {
+    this.setHours(this.getHours() + h);
+    return this;
+  };
+
+  Date.prototype.addMins = function (h) {
+    this.setMinutes(this.getMinutes() + h);
+    return this;
+  };
+
   let navigate = useNavigate();
   const [patients, setPatients] = useState([]);
   const [prescriptions, setPrescriptions] = useState([]);
+  const [info, setInfo] = useState([]);
+  const [specialOpen, setSpecialOpen] = useState(false);
+
+  const [phone, setPhone] = useState("");
+  const [name, setName] = useState("");
+
+  const [diagnosis, setDiagnosis] = useState("");
+  const [tests, setTests] = useState("");
+  const [medicine, setMedicines] = useState("");
+  const [others, setOthers] = useState("");
+
+  const [open, setOpen] = useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
 
   const fetchPatients = async () => {
     setPatients(mock.slice(0, 6));
@@ -176,6 +204,29 @@ export const Dashboard = () => {
   const fetchPrescriptions = async () => {
     setPrescriptions(mock1.slice(0, 6));
   };
+
+  const fetchUser = async () => {
+    if (phone.length === 10) {
+      const response = await axios.post(
+        "http://localhost:8000/api/pres/user",
+        {
+          phone,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const { data } = response;
+      const { user } = data;
+      if (user) {
+        setName(user.name);
+      }
+    }
+  };
+
+  useEffect(() => {
+    fetchUser();
+  }, [phone, fetchUser]);
 
   useEffect(() => {
     fetchPatients();
@@ -283,8 +334,186 @@ export const Dashboard = () => {
     });
   };
 
+  const issuePrescription = async () => {
+    const data = {
+      PatientPhoneNumber: phone,
+      diagnosis,
+      tests,
+      medicine,
+      others,
+    };
+    try {
+      const response = await axios.post(
+        "http://localhost:8000/api/pres/create",
+        data,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const { data: resData } = response;
+      const { infos } = resData;
+      setInfo(infos);
+      setSpecialOpen(true);
+      handleClose();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   return (
     <>
+      <Dialog
+        onClose={() => {
+          setSpecialOpen(false);
+        }}
+        open={specialOpen}
+        maxWidth={"lg"}
+      >
+        <div
+          style={{
+            width: 600,
+            display: "flex",
+            justifyContent: "center",
+            flexDirection: "column",
+            alignItems: "center",
+            margin: 20,
+          }}
+        >
+          <h2
+            style={{
+              textDecoration: "underline",
+              fontWeight: 600,
+              textAlign: "center",
+              marginBottom: 30,
+            }}
+          >
+            Medication Timeline
+          </h2>
+          <div
+            style={{
+              width: "100%",
+              display: "flex",
+              justifyContent: "flex-start",
+              flexDirection: "column",
+            }}
+          >
+            {info.map((med, index) => (
+              <div
+                style={{
+                  display: "flex",
+                  flexDirection: "row",
+                  alignItems: "center",
+                }}
+                key={index}
+              >
+                <p style={{ marginRight: 4 }}>{index + 1}. </p>
+                <h4 style={{ marginRight: 10 }}>{med.med_name}</h4>
+                <p style={{ marginRight: 10 }}>
+                  {" "}
+                  Ends On - {new Date(med.end).toDateString()}
+                </p>
+                <p style={{ marginRight: 5 }}> Time : </p>
+                <div style={{ display: "flex", flexDirection: "row" }}>
+                  {med.times.map((time) => (
+                    <p style={{ marginRight: 10, fontWeight: 600 }}>
+                      {new Date(time)
+                        .addHours(5)
+                        .addMins(30)
+                        .toLocaleTimeString("en-US")}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </Dialog>
+      <Dialog onClose={handleClose} open={open} maxWidth={"lg"}>
+        <div
+          style={{
+            width: 600,
+            display: "flex",
+            justifyContent: "center",
+            flexDirection: "column",
+            alignItems: "center",
+            margin: 20,
+          }}
+        >
+          <h2
+            style={{
+              textDecoration: "underline",
+              fontWeight: 600,
+              textAlign: "center",
+              marginBottom: 30,
+            }}
+          >
+            Issue Prescription
+          </h2>
+          <TextField
+            required
+            id="outlined-required"
+            label="Patient Phone Number"
+            value={phone}
+            fullWidth
+            onChange={(event) => setPhone(event.target.value)}
+          />
+          <TextField
+            required
+            fullWidth
+            id="outlined-required"
+            label="Patient Name"
+            value={name}
+            disabled
+            style={{ marginTop: 30 }}
+          />
+          <TextField
+            id="outlined-multiline-flexible"
+            label="Diagnosis"
+            multiline
+            style={{ marginTop: 30 }}
+            fullWidth
+            rows={4}
+            value={diagnosis}
+            onChange={(event) => setDiagnosis(event.target.value)}
+          />
+          <TextField
+            id="outlined-multiline-flexible1"
+            label="Medical Tests"
+            fullWidth
+            multiline
+            style={{ marginTop: 30 }}
+            rows={4}
+            value={tests}
+            onChange={(event) => setTests(event.target.value)}
+          />
+          <TextField
+            id="outlined-multiline-flexible2"
+            label="Medications"
+            multiline
+            style={{ marginTop: 30 }}
+            fullWidth
+            rows={4}
+            value={medicine}
+            onChange={(event) => setMedicines(event.target.value)}
+          />
+          <TextField
+            id="outlined-multiline-flexible3"
+            label="Other Information"
+            multiline
+            rows={4}
+            value={others}
+            style={{ marginTop: 30 }}
+            fullWidth
+            onChange={(event) => setOthers(event.target.value)}
+          />
+        </div>
+        <DialogActions>
+          <Button autoFocus onClick={handleClose}>
+            Cancel
+          </Button>
+          <Button onClick={issuePrescription}>Issue Prescription</Button>
+        </DialogActions>
+      </Dialog>
       <div style={{ marginTop: 20 }}>
         <h2
           style={{
@@ -304,7 +533,9 @@ export const Dashboard = () => {
             display: "flex",
           }}
         >
-          <Button variant="outlined">Issue Prescription</Button>
+          <Button variant="outlined" onClick={handleOpen}>
+            Issue Prescription
+          </Button>
           <Button variant="outlined">Remove Prescription</Button>
           <Button variant="outlined">View Patient</Button>
           <Button variant="outlined">Personal Details</Button>

@@ -6,6 +6,7 @@ const bodyParser = require("body-parser");
 const { sanitiseInput } = require("./utils/sanitise");
 const { router: authRouter } = require("./routes/auth.route");
 const { router: utilRouter } = require("./routes/util.route");
+const { router: prescriptionRouter } = require("./routes/prescription.router");
 const passport = require("./constants/passportConfig");
 
 const app = express();
@@ -34,6 +35,7 @@ app.use(passport.initialize());
 app.use("/api", passport.authenticate("jwt", { session: false }));
 app.use("/auth", authRouter);
 app.use("/util", utilRouter);
+app.use("/api/pres", prescriptionRouter);
 
 /* eslint-disable no-unused-vars */
 app.use(function (err, _req, res, _next) {
