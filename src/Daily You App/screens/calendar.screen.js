@@ -2,63 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, Text, View } from 'react-native';
 import { Calendar } from 'react-native-calendars';
 import { Badge, Divider } from 'react-native-elements';
-import { DefaultTheme } from '@react-navigation/native';
+import axios from 'axios';
+import { BACKEND_URL } from '../constants';
+import { useSelector } from 'react-redux';
 import { moderateScale } from '../utils/scaling';
 
 const med = { key: 'Medicines', color: 'green', selectedDotColor: 'blue' };
 const rem = { key: 'Reminders', color: 'red' };
 
-const mock1 = {
-  '2021-11-14': [
-    `Calpol refill required by ${new Date().toDateString()}`,
-    `Montair FX refill required by ${new Date().toDateString()}`,
-    `Calpol refill required by ${new Date().toDateString()}`,
-    `Montair FX refill required by ${new Date().toDateString()}`,
-    `Calpol refill required by ${new Date().toDateString()}`,
-    `Montair FX refill required by ${new Date().toDateString()}`,
-    `Calpol refill required by ${new Date().toDateString()}`,
-    `Montair FX refill required by ${new Date().toDateString()}`,
-  ],
-  '2021-11-18': [
-    `Calpol refill required by ${new Date().toDateString()}`,
-    `Montair FX refill required by ${new Date().toDateString()}`,
-  ],
-};
-
-const mock = {
-  '2021-11-14': [
-    { medicineName: 'Calpol', dosage: '25mg', time: ['10:00', '22:00'] },
-    {
-      medicineName: 'Montair FX',
-      dosage: '45mg',
-      time: ['12:00', '14:00', '22:00'],
-    },
-  ],
-  '2021-11-15': [
-    { medicineName: 'Calpol', dosage: '25mg', time: ['10:00', '22:00'] },
-    {
-      medicineName: 'Montair FX',
-      dosage: '45mg',
-      time: ['12:00', '14:00', '22:00'],
-    },
-  ],
-  '2021-11-16': [
-    { medicineName: 'Calpol', dosage: '25mg', time: ['10:00', '22:00'] },
-    {
-      medicineName: 'Montair FX',
-      dosage: '45mg',
-      time: ['12:00', '14:00', '22:00'],
-    },
-  ],
-  '2021-11-17': [
-    { medicineName: 'Calpol', dosage: '25mg', time: ['10:00', '22:00'] },
-    {
-      medicineName: 'Montair FX',
-      dosage: '45mg',
-      time: ['12:00', '14:00', '22:00'],
-    },
-  ],
-};
+const THRESHOLD = 3;
 
 const arrayToString = arr => {
   let str = '';
@@ -78,10 +30,41 @@ const formatDate = date => {
 };
 
 export const DoseCalendar = () => {
+  Date.prototype.addHours = function (h) {
+    this.setHours(this.getHours() + h);
+    return this;
+  };
+
+  Date.prototype.addMins = function (h) {
+    this.setMinutes(this.getMinutes() + h);
+    return this;
+  };
+
+  Date.prototype.toCustomTimeString = function () {
+    let hours = this.getHours();
+    let ampm = 'AM';
+    if (hours >= 12) {
+      ampm = 'PM';
+      hours %= 12;
+    }
+    let mins = this.getMinutes();
+    if (mins < 10) mins = '0' + mins;
+    return hours + ':' + mins + ' ' + ampm;
+  };
+
+  Date.prototype.getCurrentTime = function () {
+    let hours = this.getHours();
+    let mins = this.getMinutes();
+    return hours * 60 + mins;
+  };
+
   const [reminders, setReminders] = useState([]);
   const [medication, setMedications] = useState([]);
 
   const [selectedDate, setSelectedDate] = useState(new Date());
+
+  const authReducer = useSelector(state => state.authenticationReducer);
+  const { token } = authReducer;
 
   const getRefills = () => {
     const dateFormat = formatDate(selectedDate);
@@ -142,14 +125,76 @@ export const DoseCalendar = () => {
     }
   };
 
+  const datediff = (first, second) => {
+    return Math.round((second - first) / (1000 * 60 * 60 * 24));
+  };
+
   const fetchInfo = async () => {
-    setReminders(mock1);
-    setMedications(mock);
+    const response = await axios.get(BACKEND_URL + 'api/med/get', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const { data } = response;
+    const { medications } = data;
+    const medInfo = {};
+    const remInfo = {};
+    medications.map(med => {
+      const now = new Date();
+      const end = new Date(med['end_date']);
+
+      const perDay = med['time'].length;
+
+      for (let d = now; d <= end; d.setDate(d.getDate() + 1)) {
+        const daysPassed = datediff(new Date(med['start_date']), d);
+        const pillsConsumedSinceLastRefill =
+          (daysPassed * perDay) % med['extraInfo']['qty'];
+        const pillsLeft =
+          med['extraInfo']['qty'] - pillsConsumedSinceLastRefill;
+
+        const daysLeft = pillsLeft / perDay;
+        const refillDate = new Date(
+          new Date().setDate(d.getDate() + 3),
+        ).toDateString();
+
+        if (daysLeft === THRESHOLD) {
+          if (remInfo.hasOwnProperty(formatDate(d))) {
+            remInfo[formatDate(d)].push(
+              `${med['drug']} refill required by ${refillDate}`,
+            );
+          } else {
+            remInfo[formatDate(d)] = [
+              `${med['drug']} refill required by ${refillDate}`,
+            ];
+          }
+        }
+
+        if (medInfo.hasOwnProperty(formatDate(d))) {
+          medInfo[formatDate(d)].push({
+            medicineName: med['drug'],
+            dosage: med['extraInfo']['dosage'],
+            time: med['time'].map(tm =>
+              new Date(tm).addHours(5).addMins(30).toCustomTimeString(),
+            ),
+          });
+        } else {
+          medInfo[formatDate(d)] = [
+            {
+              medicineName: med['drug'],
+              dosage: med['extraInfo']['dosage'],
+              time: med['time'].map(tm =>
+                new Date(tm).addHours(5).addMins(30).toCustomTimeString(),
+              ),
+            },
+          ];
+        }
+      }
+    });
+    setMedications(medInfo);
+    setReminders(remInfo);
   };
 
   useEffect(() => {
     fetchInfo();
-  });
+  }, []);
 
   const markDates = () => {
     const dates = {};

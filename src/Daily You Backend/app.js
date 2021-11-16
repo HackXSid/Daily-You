@@ -7,6 +7,8 @@ const { sanitiseInput } = require("./utils/sanitise");
 const { router: authRouter } = require("./routes/auth.route");
 const { router: utilRouter } = require("./routes/util.route");
 const { router: prescriptionRouter } = require("./routes/prescription.router");
+const { router: medicationRouter } = require("./routes/medication.router");
+const { router: recordRouter } = require("./routes/record.router");
 const passport = require("./constants/passportConfig");
 
 const app = express();
@@ -36,6 +38,8 @@ app.use("/api", passport.authenticate("jwt", { session: false }));
 app.use("/auth", authRouter);
 app.use("/util", utilRouter);
 app.use("/api/pres", prescriptionRouter);
+app.use("/api/med", medicationRouter);
+app.use("/record", recordRouter);
 
 /* eslint-disable no-unused-vars */
 app.use(function (err, _req, res, _next) {

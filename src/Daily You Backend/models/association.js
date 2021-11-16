@@ -9,7 +9,8 @@ const applyExtraSetup = (sequelize) => {
   medication.belongsTo(user, { as: "Patient" });
   medication.belongsTo(prescription, { as: "Prescription" });
 
-  record.belongsTo(medication, { as: "Record" });
+  record.belongsTo(medication, { as: "Medication" });
+  record.belongsTo(user, { as: "Patient" });
 };
 
 module.exports = { applyExtraSetup };

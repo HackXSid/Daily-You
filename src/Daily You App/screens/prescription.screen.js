@@ -1,89 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { Text, View, StyleSheet, ScrollView } from 'react-native';
 import { Card, Button, SearchBar, Divider } from 'react-native-elements';
+import { useSelector } from 'react-redux';
+import axios from 'axios';
+import { BACKEND_URL } from '../constants';
 import { OverlayContainer } from '../components/CustomOverlay';
 import { moderateScale } from '../utils/scaling';
-
-const mock = [
-  {
-    doctorName: 'Dr. Siddharth S Roy',
-    createdAt: new Date(),
-    doctorPhoneNo: '9051633165',
-    prescription: {
-      diagnosis:
-        'Blood in cough - Possible case of Lung Infection\nWheezing sound detected - Maybe Windpipe Blockage',
-      tests: 'Lung CT Scan\nLung Biopsy',
-      medicine:
-        'Calpol twice a day till 24th Nov\nChlorific before lunch twice a day, end on 12th December',
-      others: 'Use Odometer twice a day\nNo meat consumption',
-    },
-  },
-  {
-    doctorName: 'Dr. Siddharth S Roy',
-    createdAt: new Date(),
-    doctorPhoneNo: '9051633165',
-    prescription: {
-      diagnosis:
-        'Blood in cough - Possible case of Lung Infection\nWheezing sound detected - Maybe Windpipe Blockage',
-      tests: 'Lung CT Scan\nLung Biopsy',
-      medicine:
-        'Calpol twice a day till 24th Nov\nChlorific before lunch twice a day, end on 12th December',
-      others: 'Use Odometer twice a day\nNo meat consumption',
-    },
-  },
-  {
-    doctorName: 'Dr. Siddharth S Roy',
-    createdAt: new Date(),
-    doctorPhoneNo: '9051633165',
-    prescription: {
-      diagnosis:
-        'Blood in cough - Possible case of Lung Infection\nWheezing sound detected - Maybe Windpipe Blockage',
-      tests: 'Lung CT Scan\nLung Biopsy',
-      medicine:
-        'Calpol twice a day till 24th Nov\nChlorific before lunch twice a day, end on 12th December',
-      others: 'Use Odometer twice a day\nNo meat consumption',
-    },
-  },
-  {
-    doctorName: 'Dr. Siddharth S Roy',
-    createdAt: new Date(),
-    doctorPhoneNo: '9051633165',
-    prescription: {
-      diagnosis:
-        'Blood in cough - Possible case of Lung Infection\nWheezing sound detected - Maybe Windpipe Blockage',
-      tests: 'Lung CT Scan\nLung Biopsy',
-      medicine:
-        'Calpol twice a day till 24th Nov\nChlorific before lunch twice a day, end on 12th December',
-      others: 'Use Odometer twice a day\nNo meat consumption',
-    },
-  },
-  {
-    doctorName: 'Dr. Siddharth S Roy',
-    createdAt: new Date(),
-    doctorPhoneNo: '9051633165',
-    prescription: {
-      diagnosis:
-        'Blood in cough - Possible case of Lung Infection\nWheezing sound detected - Maybe Windpipe Blockage',
-      tests: 'Lung CT Scan\nLung Biopsy',
-      medicine:
-        'Calpol twice a day till 24th Nov\nChlorific before lunch twice a day, end on 12th December',
-      others: 'Use Odometer twice a day\nNo meat consumption',
-    },
-  },
-  {
-    doctorName: 'Dr. Siddharth S Roy',
-    createdAt: new Date(),
-    doctorPhoneNo: '9051633165',
-    prescription: {
-      diagnosis:
-        'Blood in cough - Possible case of Lung Infection\nWheezing sound detected - Maybe Windpipe Blockage',
-      tests: 'Lung CT Scan\nLung Biopsy',
-      medicine:
-        'Calpol twice a day till 24th Nov\nChlorific before lunch twice a day, end on 12th December',
-      others: 'Use Odometer twice a day\nNo meat consumption',
-    },
-  },
-];
 
 const styles = StyleSheet.create({
   container: {
@@ -104,7 +26,7 @@ const styles = StyleSheet.create({
   buttonContainer: {
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between',
+    justifyContent: 'space-evenly',
   },
   headContainer: {
     display: 'flex',
@@ -270,6 +192,8 @@ const PrescriptionInfo = ({ info }) => {
 export const Prescription = () => {
   const [search, setSearch] = useState('');
   const [prescription, setPrescription] = useState([]);
+  const authReducer = useSelector(state => state.authenticationReducer);
+  const { token } = authReducer;
   const [open, setOpen] = useState({
     idx: -1,
     info: {},
@@ -284,7 +208,24 @@ export const Prescription = () => {
   };
 
   const fetchPrescriptions = async () => {
-    setPrescription(mock);
+    const response = await axios.get(BACKEND_URL + 'api/pres/get', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    const { data } = response;
+    const { prescriptions } = data;
+    setPrescription(
+      prescriptions.map(pres => ({
+        doctorName: pres['Doctor.name'],
+        createdAt: new Date(pres['createdAt']),
+        doctorPhoneNo: pres['Doctor.phone_number'],
+        prescription: {
+          diagnosis: pres['diagnosis'],
+          tests: pres['tests'],
+          medicine: pres['medicine'],
+          others: pres['others'],
+        },
+      })),
+    );
   };
 
   useEffect(() => {

@@ -1,6 +1,7 @@
 "use strict";
 const express = require("express");
 const { parseBuffer, parseMedicine } = require("../utils/parseMedicine");
+const { nutritionalInfo } = require("../utils/foodNLP");
 const router = express.Router();
 
 router.route("/parseMedicine").get((req, res) => {
@@ -11,5 +12,7 @@ router.route("/parseMedicine").get((req, res) => {
     res.send({ info, state });
   });
 });
+
+router.route("/foodnlp").post(nutritionalInfo);
 
 module.exports = { router };

@@ -12,6 +12,18 @@ const prescriptionUserGet = async (req, res) => {
   res.send({ user });
 };
 
+const prescriptionGet = async (req, res) => {
+  const { user } = req;
+  const prescriptions = await prescription.findAll({
+    where: {
+      PatientPhoneNumber: user.phone_number,
+    },
+    include: ["Doctor"],
+    raw: true,
+  });
+  res.send({ prescriptions });
+};
+
 const prescriptionCreate = async (req, res) => {
   const { user } = req;
   const { PatientPhoneNumber, diagnosis, tests, medicine, others } = req.body;
@@ -45,4 +57,4 @@ const prescriptionCreate = async (req, res) => {
   });
 };
 
-module.exports = { prescriptionUserGet, prescriptionCreate };
+module.exports = { prescriptionUserGet, prescriptionCreate, prescriptionGet };

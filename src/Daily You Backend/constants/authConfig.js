@@ -3,7 +3,7 @@
 const jwt = require("jsonwebtoken");
 
 const authConfig = {
-  expiresIn: "30 day",
+  expiresIn: "120 days",
   algorithm: "HS256",
 };
 

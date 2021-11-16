@@ -3,5 +3,9 @@
 const { DataTypes } = require("sequelize");
 
 module.exports = (sequelize) => {
-  sequelize.define("record", {});
+  sequelize.define("record", {
+    timeSlot: {
+      type: DataTypes.STRING,
+    },
+  });
 };
