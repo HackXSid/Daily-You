@@ -31,6 +31,8 @@
     "react-native-svg": "^12.1.1",
     "react-native-textinput-effects": "^0.6.2",
     "react-native-vector-icons": "^9.0.0",
+    "react-native-webview": "^11.14.3",
+    "react-native-youtube-iframe": "^2.1.2",
     "react-redux": "^7.2.6",
     "redux": "^4.1.2",
     "redux-logger": "^3.0.6",

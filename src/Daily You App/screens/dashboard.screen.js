@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { WebView } from 'react-native-webview';
 import {
   View,
   Text,
   Pressable,
   ScrollView,
+  ImageBackground,
   TouchableOpacity,
   Linking,
   Keyboard,
@@ -19,6 +21,110 @@ import { Divider } from 'react-native-elements';
 import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { OverlayContainer } from '../components/CustomOverlay';
 import { moderateScale } from '../utils/scaling';
+import YoutubePlayer from 'react-native-youtube-iframe';
+
+const options = {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+};
+
+const getArrayString = arr => {
+  if (arr.length === 0) return 'None';
+  let str = '';
+  arr.forEach((ele, index) => {
+    if (index === arr.length - 1) str += ele;
+    else str += ele + ', ';
+  });
+  return str;
+};
+
+const MedInfo = ({ medInfo }) => {
+  console.log(medInfo);
+
+  const getHelp = () => {
+    if (medInfo.extraInfo.helpType === 'image') {
+      return (
+        <ImageBackground
+          source={{ uri: medInfo.extraInfo.help }}
+          style={{
+            width: 250,
+            height: 150,
+            marginTop: 10,
+          }}
+          // resizeMode="contain"
+        />
+      );
+    } else {
+      return (
+        <YoutubePlayer
+          height={240}
+          width={310}
+          webViewStyle={{ marginTop: 10 }}
+          videoId={'Rdb3p9RZoR4'}
+        />
+      );
+    }
+  };
+
+  return (
+    <View style={{ marginTop: 10, width: '100%' }}>
+      <Text
+        style={{
+          fontSize: moderateScale(20),
+          textDecorationLine: 'underline',
+          marginBottom: 15,
+          textAlign: 'center',
+        }}>
+        {medInfo.drug}
+      </Text>
+      <View
+        style={{
+          flexWrap: 'wrap',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          width: '95%',
+          marginLeft: '2.5%',
+        }}>
+        <Text style={{ fontSize: moderateScale(15), textAlign: 'left' }}>
+          <Text>Start : </Text>
+          <Text style={{ color: 'black' }}>
+            {new Date(medInfo.start_date).toLocaleDateString(
+              undefined,
+              options,
+            )}
+          </Text>
+        </Text>
+        <Text style={{ fontSize: moderateScale(15), textAlign: 'right' }}>
+          <Text>End : </Text>
+          <Text style={{ color: 'black' }}>
+            {new Date(medInfo.end_date).toLocaleDateString(undefined, options)}
+          </Text>
+        </Text>
+      </View>
+      <Text
+        style={{
+          marginTop: 10,
+          fontSize: moderateScale(16),
+          textAlign: 'center',
+          color: 'black',
+        }}>
+        {medInfo.text}
+      </Text>
+      <Text
+        style={{
+          marginTop: 10,
+          fontSize: moderateScale(15),
+          textAlign: 'center',
+        }}>
+        Prohibited Food : {getArrayString(medInfo.extraInfo.food)}
+      </Text>
+      <View style={{ justifyContent: 'center', alignItems: 'center' }}>
+        {getHelp()}
+      </View>
+    </View>
+  );
+};
 
 const TodayRem = ({ remInfo }) => {
   remInfo.sort((obj1, obj2) => obj1['refill'] >= obj2['refill']);
@@ -37,7 +143,7 @@ const TodayRem = ({ remInfo }) => {
         }}>
         Upcoming Reminders
       </Text>
-      <View style={{ marginTop: 10, width: '100%' }}>
+      <ScrollView style={{ marginTop: 10, height: 300, width: '100%' }}>
         {remInfo.map((rem, index) => {
           return (
             <View
@@ -59,7 +165,7 @@ const TodayRem = ({ remInfo }) => {
             </View>
           );
         })}
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -207,7 +313,7 @@ const TodayMed = ({ medInfo, PatientPhoneNumber, handleIntake }) => {
           {text}
         </Text>
       ))}
-      <View style={{ width: '100%' }}>
+      <ScrollView style={{ width: '100%', height: 300 }}>
         {medData.map((med, index) => {
           let background = 'white';
           if (med.time.getCurrentTime() === closestTime && !med.done) {
@@ -244,7 +350,7 @@ const TodayMed = ({ medInfo, PatientPhoneNumber, handleIntake }) => {
             </React.Fragment>
           );
         })}
-      </View>
+      </ScrollView>
     </View>
   );
 };
@@ -318,9 +424,10 @@ const Dashboard = () => {
         });
         if (records.length) delay /= records.length;
 
-        const success = Math.round(
-          (pillsConsumedActual / pillsConsumedIdeal) * 100,
-        );
+        const success =
+          pillsConsumedIdeal === 0
+            ? 0
+            : Math.round((pillsConsumedActual / pillsConsumedIdeal) * 100);
 
         delay = Math.round(delay);
 
@@ -334,6 +441,10 @@ const Dashboard = () => {
           progress: progress,
           delay: delay,
           success: success,
+          extraInfo: med['extraInfo'],
+          id: med['id'],
+          records: med['records'],
+          original: med,
         };
       }),
     );
@@ -381,21 +492,17 @@ const Dashboard = () => {
     return name.split(' ')[0];
   };
 
-  const options = {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  };
-
   const handleIntake = () => {
     setViewTodayMed(false);
     fetchMedication();
   };
 
+  const [medInfoView, setMedInfoView] = useState(-1);
+
   const getMedicationCards = () =>
     medication.map((med, index) => (
       <CustomCard styleClass={{ borderRadius: 10, marginTop: 15 }} key={index}>
-        <Pressable>
+        <Pressable onPress={() => setMedInfoView(index)}>
           <View
             style={{
               flexDirection: 'row',
@@ -529,6 +636,13 @@ const Dashboard = () => {
 
   return (
     <>
+      {medInfoView !== -1 ? (
+        <OverlayContainer
+          visible={medInfoView !== -1}
+          toggleOverlay={() => setMedInfoView(-1)}>
+          <MedInfo medInfo={medication[medInfoView]} />
+        </OverlayContainer>
+      ) : null}
       <OverlayContainer
         visible={viewTodayMed}
         toggleOverlay={() => setViewTodayMed(false)}>
