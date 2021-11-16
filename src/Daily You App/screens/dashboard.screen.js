@@ -311,7 +311,7 @@ const Dashboard = () => {
 
           const diff = Math.max(
             30,
-            100 - Math.abs(actualTime - recordTime) + 30,
+            100 - Math.abs(actualTime - recordTime) / 10 + 30,
           );
 
           delay += diff / 2;
@@ -321,6 +321,8 @@ const Dashboard = () => {
         const success = Math.round(
           (pillsConsumedActual / pillsConsumedIdeal) * 100,
         );
+
+        delay = Math.round(delay);
 
         return {
           drug: med['drug'],

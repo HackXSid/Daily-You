@@ -1,11 +1,56 @@
 import React, { useEffect, useState } from 'react';
-import { Text, View, StyleSheet, ScrollView } from 'react-native';
+import {
+  Text,
+  View,
+  StyleSheet,
+  ScrollView,
+  PermissionsAndroid,
+  Alert,
+} from 'react-native';
 import { Card, Button, SearchBar, Divider } from 'react-native-elements';
 import { useSelector } from 'react-redux';
 import axios from 'axios';
 import { BACKEND_URL } from '../constants';
 import { OverlayContainer } from '../components/CustomOverlay';
 import { moderateScale } from '../utils/scaling';
+// import RNFetchBlob from 'rn-fetch-blob';
+
+const getHtml = (
+  doctorName,
+  doctorContact,
+  diagnosis,
+  medicalTests,
+  Medicine,
+  Others,
+) => {
+  return `
+  <body>
+      <h1>Prescription</h1>
+      <h4>Doctor : ${doctorName}</h4>
+      <h5>Contact : ${doctorContact}</h5>
+      
+      <h5>Diagnosis</h5>
+      <pre>
+${diagnosis}
+      </pre>
+      
+      <h5>Medical Tests</h5>
+      <pre>
+${medicalTests}
+      </pre>
+      
+      <h5>Medicine</h5>
+      <pre>
+${Medicine}
+      </pre>
+      
+      <h5>Others</h5>
+      <pre>
+${Others}
+      </pre>
+      <p>Generated and E-Verified by Daily You</p>
+    `;
+};
 
 const styles = StyleSheet.create({
   container: {
@@ -203,9 +248,70 @@ export const Prescription = () => {
     setOpen({ ...open, idx, info: prescription[idx] });
   };
 
-  const downloadPrescription = idx => {
-    console.log(idx);
+  const isPermitted = async () => {
+    console.log('Requesting Permission');
+    if (Platform.OS === 'android') {
+      try {
+        console.log('Android');
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.WRITE_EXTERNAL_STORAGE,
+          {
+            title: 'External Storage Write Permission',
+            message: 'App needs access to Storage data',
+          },
+        );
+        console.log(granted);
+        return granted === PermissionsAndroid.RESULTS.GRANTED;
+      } catch (err) {
+        console.error(err);
+        return false;
+      }
+    } else {
+      return true;
+    }
   };
+
+  const downloadPrescription = async idx => {
+    //   if (!(await isPermitted())) {
+    //     return;
+    //   }
+    const html = getHtml(
+      prescription[idx]['doctorName'],
+      prescription[idx]['doctorPhoneNo'],
+      prescription[idx]['prescription']['diagnosis'],
+      prescription[idx]['prescription']['tests'],
+      prescription[idx]['prescription']['medicine'],
+      prescription[idx]['prescription']['others'],
+    );
+
+    Alert.alert('', 'PDF has been download', ['Ok']);
+
+    // console.log(html);
+  };
+  //   const docDir = RNFetchBlob.fs.dirs.DocumentDir;
+  //   let options = {
+  //     fileCache: true,
+  //     addAndroidDownloads: {
+  //       //Related to the Android only
+  //       useDownloadManager: true,
+  //       notification: true,
+  //       path: docDir + '/doc' + 'Prescription' + '.pdf',
+  //       description: 'Image',
+  //     },
+  //   };
+  //   RNFetchBlob.config(options)
+  //     .fetch(
+  //       'POST',
+  //       'https://htmlpdfapi.com/api/v1/pdf',
+  //       {
+  //         Authentication: 'Token Bp7-2jRwzVeie-dnskfnl',
+  //       },
+  //       { html },
+  //     )
+  //     .then(res => {
+  //       console.log('res -> ', JSON.stringify(res));
+  //     });
+  // };
 
   const fetchPrescriptions = async () => {
     const response = await axios.get(BACKEND_URL + 'api/pres/get', {
