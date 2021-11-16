@@ -48,6 +48,23 @@ app.use(function (err, _req, res, _next) {
 });
 /* eslint-enable no-unused-vars */
 
+// Firebase setup
+
+app.post("/register", async (req, res) => {
+  const { token, userPhoneNumber } = req.body;
+
+  const { token: tokenModel } = require("./models").models;
+
+  await tokenModel.findOrCreate({
+    where: { userPhoneNumber },
+    defaults: {
+      id: token,
+    },
+  });
+
+  res.send({ success: true });
+});
+
 module.exports = {
   app,
 };

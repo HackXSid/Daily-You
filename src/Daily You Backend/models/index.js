@@ -10,6 +10,7 @@ const modelDefiners = [
   require("./medication.model"),
   require("./record.model"),
   require("./medicine.model"),
+  require("./token.model"),
 ];
 
 // We define all models according to their files.

@@ -1,7 +1,7 @@
 "use strict";
 
 const applyExtraSetup = (sequelize) => {
-  const { user, prescription, medication, record } = sequelize.models;
+  const { user, prescription, medication, record, token } = sequelize.models;
 
   prescription.belongsTo(user, { as: "Patient" });
   prescription.belongsTo(user, { as: "Doctor" });
@@ -11,6 +11,8 @@ const applyExtraSetup = (sequelize) => {
 
   record.belongsTo(medication, { as: "Medication" });
   record.belongsTo(user, { as: "Patient" });
+
+  user.hasOne(token);
 };
 
 module.exports = { applyExtraSetup };

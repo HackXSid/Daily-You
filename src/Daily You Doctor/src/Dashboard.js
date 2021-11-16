@@ -206,7 +206,7 @@ export const Dashboard = ({ token }) => {
   };
 
   const fetchUser = async () => {
-    if (phone.length === 10) {
+    if (phone.length === 10 && name.length === 0) {
       const response = await axios.post(
         "http://localhost:8000/api/pres/user",
         {

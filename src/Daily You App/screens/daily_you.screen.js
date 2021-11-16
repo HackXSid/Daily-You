@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Text, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -7,10 +7,37 @@ import { Dashboard } from './dashboard.screen';
 import { Settings } from './settings.screen';
 import { DoseCalendar } from './calendar.screen';
 import { Prescription } from './prescription.screen';
+import { useSelector } from 'react-redux';
+import messaging from '@react-native-firebase/messaging';
+import axios from 'axios';
+import { BACKEND_URL } from '../constants';
 
 const Tab = createBottomTabNavigator();
 
 const DailyYouScreen = ({ logout }) => {
+  const authReducer = useSelector(state => state.authenticationReducer);
+  const { user } = authReducer;
+  const sendFcmToken = async () => {
+    try {
+      await messaging().registerDeviceForRemoteMessages();
+      const token = await messaging().getToken();
+      const data = {
+        token,
+        userPhoneNumber: user.phone_number,
+      };
+      console.log(data);
+      await axios.post(BACKEND_URL + 'register', data);
+    } catch (err) {
+      //Do nothing
+      console.log(err.response.data);
+      return;
+    }
+  };
+
+  useEffect(() => {
+    sendFcmToken();
+  }, []);
+
   return (
     <View style={{ height: '100%' }}>
       <NavigationContainer>
