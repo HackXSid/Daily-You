@@ -1,5 +1,7 @@
 # Daily-You
 
+Demo : https://github.com/HackXSid/Daily-You
+
 ### Installation
 
 1. ```git clone git@github.com:HackXSid/Daily-You.git```
