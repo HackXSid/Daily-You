@@ -1,5 +1,5 @@
 import axios from 'axios';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   ImageBackground,
   StyleSheet,
@@ -7,10 +7,13 @@ import {
   Text,
   TextInput,
   Alert,
+  NativeModules,
 } from 'react-native';
 import { CustomButton } from '../components/CustomButton';
 import { BACKEND_URL } from '../constants';
 import { SignUp } from './signup.screen';
+
+const SharedStorage = NativeModules.SharedStorage;
 
 const styles = StyleSheet.create({
   container: {
@@ -80,6 +83,14 @@ const Landing = ({ login }) => {
       ]);
     }
   };
+
+  useEffect(() => {
+    SharedStorage.set(
+      JSON.stringify({
+        text: 'Login to Daily You App to view your medication schedule',
+      }),
+    );
+  }, []);
 
   return (
     <>

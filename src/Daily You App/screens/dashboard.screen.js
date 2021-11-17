@@ -10,6 +10,7 @@ import {
   Linking,
   Keyboard,
   Alert,
+  NativeModules,
 } from 'react-native';
 import { Button } from 'react-native-elements';
 import axios from 'axios';
@@ -22,6 +23,8 @@ import { AnimatedCircularProgress } from 'react-native-circular-progress';
 import { OverlayContainer } from '../components/CustomOverlay';
 import { moderateScale } from '../utils/scaling';
 import YoutubePlayer from 'react-native-youtube-iframe';
+
+const SharedStorage = NativeModules.SharedStorage;
 
 const options = {
   year: 'numeric',
@@ -482,6 +485,55 @@ const Dashboard = () => {
     });
     setRemInfo(remInfo);
     setMedInfo(medInfo);
+
+    // Widget Code
+
+    const medData = [];
+
+    medInfo.forEach(med => {
+      const times = med['time'];
+      times.forEach(time => {
+        const timeString = getTimeStringRecord(new Date(time));
+        const { records } = med;
+        let isDone = false;
+        records.forEach(record => {
+          if (
+            record.timeSlot === timeString &&
+            new Date(record.createdAt).toDateString() ===
+              new Date().toDateString()
+          ) {
+            isDone = true;
+          }
+        });
+        if (isDone) return;
+        medData.push({
+          rawTime: time,
+          time: new Date(time),
+          text: `${med['medicineName']}, ${med['dosage']}`,
+          helper: new Date(time).getCurrentTime(),
+          prohibit: med['prohibit'],
+          done: isDone,
+          id: med['id'],
+          timeString,
+        });
+      });
+    });
+
+    medData.sort((obj1, obj2) => obj1['time'] <= obj2['time']);
+
+    let string = '';
+
+    medData.forEach(med => {
+      string += med['time'].toCustomTimeString() + ' ' + med['text'] + '\n';
+    });
+
+    SharedStorage.set(
+      JSON.stringify({
+        text: string,
+      }),
+    );
+
+    // Ends
   };
 
   useEffect(() => {

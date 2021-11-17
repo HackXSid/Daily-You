@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Text, View } from 'react-native';
+import { Text, View, NativeModules } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -13,6 +13,7 @@ import axios from 'axios';
 import { BACKEND_URL } from '../constants';
 
 const Tab = createBottomTabNavigator();
+const SharedStorage = NativeModules.SharedStorage;
 
 const DailyYouScreen = ({ logout }) => {
   const authReducer = useSelector(state => state.authenticationReducer);
@@ -36,6 +37,12 @@ const DailyYouScreen = ({ logout }) => {
 
   useEffect(() => {
     sendFcmToken();
+  }, []);
+
+  useEffect(() => {
+    SharedStorage.set(
+      JSON.stringify({ text: 'This is data from the React Native app' }),
+    );
   }, []);
 
   return (

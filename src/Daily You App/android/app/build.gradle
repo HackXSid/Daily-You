@@ -156,6 +156,9 @@ android {
             keyPassword 'android'
         }
     }
+    buildFeatures {
+        viewBinding true
+    }
     buildTypes {
         debug {
             signingConfig signingConfigs.debug
