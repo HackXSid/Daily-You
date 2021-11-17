@@ -15,4 +15,16 @@ router.route("/parseMedicine").get((req, res) => {
 
 router.route("/foodnlp").post(nutritionalInfo);
 
+router.route("/emergency").post(async (req, res) => {
+  const { phone_number } = req.body;
+  const { user } = require("../models").models;
+  const users = await user.findAll({
+    where: {
+      emergency_phone_number: phone_number,
+    },
+    raw: true,
+  });
+  res.send({ users });
+});
+
 module.exports = { router };

@@ -14,9 +14,66 @@ import "./Dashboard.css";
 
 const mock = [
   {
-    name: "Alexandr Wang",
+    name: "Siddharth Singha Roy",
+    age: 21,
+    prescriptions: 2,
+    medicines: [
+      {
+        name: "Calpol",
+        status: 1,
+      },
+      {
+        name: "MontairFX",
+        status: -1,
+      },
+      {
+        name: "Asthalin",
+        status: 0,
+      },
+    ],
+  },
+  {
+    name: "Rosa Diaz",
+    age: 56,
+    prescriptions: 1,
+    medicines: [
+      {
+        name: "Paracetamol",
+        status: 1,
+      },
+      {
+        name: "Asthalin",
+        status: 1,
+      },
+      {
+        name: "Montair FX",
+        status: 0,
+      },
+    ],
+  },
+  {
+    name: "Jake Peralta",
     age: 56,
     prescriptions: 5,
+    medicines: [
+      {
+        name: "Paracetamol",
+        status: 1,
+      },
+      {
+        name: "Asthalin",
+        status: 1,
+      },
+      {
+        name: "Montair FX",
+        status: 1,
+      },
+    ],
+  },
+  {
+    name: "David Soren",
+    age: 56,
+    prescriptions: 3,
     medicines: [
       {
         name: "Paracetamol",
@@ -26,218 +83,24 @@ const mock = [
         name: "Asthalin",
         status: -1,
       },
+    ],
+  },
+  {
+    name: "Villa Caps",
+    age: 56,
+    prescriptions: 5,
+    medicines: [
       {
-        name: "Montair FX",
+        name: "Paracetamol",
+        status: 1,
+      },
+      {
+        name: "Asthalin",
+        status: 1,
+      },
+      {
+        name: "Calpol",
         status: 0,
-      },
-    ],
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    prescriptions: 5,
-    medicines: [
-      {
-        name: "Paracetamol",
-        status: 1,
-      },
-      {
-        name: "Asthalin",
-        status: 1,
-      },
-      {
-        name: "Montair FX",
-        status: 0,
-      },
-    ],
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    prescriptions: 5,
-    medicines: [
-      {
-        name: "Paracetamol",
-        status: 1,
-      },
-      {
-        name: "Asthalin",
-        status: 1,
-      },
-      {
-        name: "Montair FX",
-        status: 1,
-      },
-    ],
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    prescriptions: 5,
-    medicines: [
-      {
-        name: "Paracetamol",
-        status: 1,
-      },
-      {
-        name: "Asthalin",
-        status: -1,
-      },
-      {
-        name: "Montair FX",
-        status: 0,
-      },
-    ],
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    prescriptions: 5,
-    medicines: [
-      {
-        name: "Paracetamol",
-        status: 1,
-      },
-      {
-        name: "Asthalin",
-        status: 1,
-      },
-      {
-        name: "Montair FX",
-        status: 0,
-      },
-    ],
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    prescriptions: 5,
-    medicines: [
-      {
-        name: "Paracetamol",
-        status: 1,
-      },
-      {
-        name: "Asthalin",
-        status: 1,
-      },
-      {
-        name: "Montair FX",
-        status: 1,
-      },
-    ],
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    prescriptions: 5,
-    medicines: [
-      {
-        name: "Paracetamol",
-        status: 1,
-      },
-      {
-        name: "Asthalin",
-        status: -1,
-      },
-      {
-        name: "Montair FX",
-        status: 0,
-      },
-    ],
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    prescriptions: 5,
-    medicines: [
-      {
-        name: "Paracetamol",
-        status: 1,
-      },
-      {
-        name: "Asthalin",
-        status: 1,
-      },
-      {
-        name: "Montair FX",
-        status: 0,
-      },
-    ],
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    prescriptions: 5,
-    medicines: [
-      {
-        name: "Paracetamol",
-        status: 1,
-      },
-      {
-        name: "Asthalin",
-        status: 1,
-      },
-      {
-        name: "Montair FX",
-        status: 1,
-      },
-    ],
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    prescriptions: 5,
-    medicines: [
-      {
-        name: "Paracetamol",
-        status: 1,
-      },
-      {
-        name: "Asthalin",
-        status: -1,
-      },
-      {
-        name: "Montair FX",
-        status: 0,
-      },
-    ],
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    prescriptions: 5,
-    medicines: [
-      {
-        name: "Paracetamol",
-        status: 1,
-      },
-      {
-        name: "Asthalin",
-        status: 1,
-      },
-      {
-        name: "Montair FX",
-        status: 0,
-      },
-    ],
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    prescriptions: 5,
-    medicines: [
-      {
-        name: "Paracetamol",
-        status: 1,
-      },
-      {
-        name: "Asthalin",
-        status: 1,
-      },
-      {
-        name: "Montair FX",
-        status: 1,
       },
     ],
   },

@@ -13,73 +13,23 @@ import "./Dashboard.css";
 
 const mock1 = [
   {
-    name: "Alexandr Wang",
-    age: 56,
+    name: "Wayne Bruce",
+    age: 31,
     issuedOn: new Date(),
   },
   {
-    name: "Alexandr Wang",
-    age: 56,
+    name: "David Caps",
+    age: 22,
     issuedOn: new Date(),
   },
   {
-    name: "Alexandr Wang",
-    age: 56,
+    name: "Wouton Phillips",
+    age: 46,
     issuedOn: new Date(),
   },
   {
-    name: "Alexandr Wang",
-    age: 56,
-    issuedOn: new Date(),
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    issuedOn: new Date(),
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    issuedOn: new Date(),
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    issuedOn: new Date(),
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    issuedOn: new Date(),
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    issuedOn: new Date(),
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    issuedOn: new Date(),
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    issuedOn: new Date(),
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    issuedOn: new Date(),
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
-    issuedOn: new Date(),
-  },
-  {
-    name: "Alexandr Wang",
-    age: 56,
+    name: "Emily Blackstone",
+    age: 18,
     issuedOn: new Date(),
   },
 ];

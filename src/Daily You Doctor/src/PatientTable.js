@@ -26,13 +26,15 @@ function createData(name, calories, fat, carbs, protein, price, q) {
     history: [
       {
         date: "2020-01-05",
-        customerId: "11091700",
-        amount: 3,
+        customerId: "09:00 PM",
+        amount: "On Time",
+        delay: "2 mins",
       },
       {
         date: "2020-01-02",
-        customerId: "Anonymous",
-        amount: 1,
+        customerId: "10:00 AM",
+        amount: "Early",
+        delay: "1hr 30 mins",
       },
     ],
   };
@@ -44,11 +46,20 @@ function Row(props) {
   const errorColor = "#f5abba";
   const warningColor = "#f5e6ab";
   const successColor = "white";
+
+  let color = successColor;
+
+  if (row.price < 25) {
+    color = errorColor;
+  } else if (row.protein < 50) {
+    color = warningColor;
+  }
+
   return (
     <React.Fragment>
       <TableRow
         sx={{ "& > *": { borderBottom: "unset" } }}
-        style={{ background: successColor }}
+        style={{ background: color }}
       >
         <TableCell>
           <IconButton
@@ -64,12 +75,14 @@ function Row(props) {
         </TableCell>
         <TableCell align="right">{row.calories}</TableCell>
         <TableCell align="right">{row.fat}</TableCell>
-        <TableCell align="right">{row.carbs}</TableCell>
         <TableCell align="right">
-          <Chip label={`31%`} color="error" />
+          <Chip label={row.carbs + "%"} color="success" />
         </TableCell>
         <TableCell align="right">
-          <Chip label={`31%`} color="warning" />
+          <Chip label={row.protein + "%"} color="error" />
+        </TableCell>
+        <TableCell align="right">
+          <Chip label={row.price + "%"} color="warning" />
         </TableCell>
       </TableRow>
       <TableRow>
@@ -96,9 +109,7 @@ function Row(props) {
                       </TableCell>
                       <TableCell>{historyRow.customerId}</TableCell>
                       <TableCell align="right">{historyRow.amount}</TableCell>
-                      <TableCell align="right">
-                        {Math.round(historyRow.amount * row.price * 100) / 100}
-                      </TableCell>
+                      <TableCell align="right">{historyRow.delay}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -111,15 +122,17 @@ function Row(props) {
   );
 }
 
-const rows = [
-  createData("Frozen yoghurt", 159, 6.0, 24, 4.0, 3.99, 1),
-  createData("Ice cream sandwich", 237, 9.0, 37, 4.3, 4.99, 1),
-  createData("Eclair", 262, 16.0, 24, 6.0, 3.79, 1),
-  createData("Cupcake", 305, 3.7, 67, 4.3, 2.5, 1),
-  createData("Gingerbread", 356, 16.0, 49, 3.9, 1.5, 1),
-];
-
-export default function CollapsibleTable() {
+export default function CollapsibleTable({ medication }) {
+  const rows = medication.map((med) => {
+    return createData(
+      med["drug"],
+      med["dose"],
+      new Date(med["start_date"]).toDateString(),
+      med["progress"],
+      med["delay"],
+      med["success"]
+    );
+  });
   return (
     <TableContainer component={Paper} style={{ marginTop: 30 }}>
       <Table aria-label="collapsible table">
@@ -129,7 +142,7 @@ export default function CollapsibleTable() {
             <TableCell>Drug</TableCell>
             <TableCell align="right">Dose</TableCell>
             <TableCell align="right">Start Date</TableCell>
-            <TableCell align="right">Refill By</TableCell>
+            <TableCell align="right">Progress</TableCell>
             <TableCell align="right">On Time</TableCell>
             <TableCell align="right">On Track</TableCell>
           </TableRow>

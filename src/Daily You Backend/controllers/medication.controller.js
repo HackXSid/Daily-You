@@ -27,4 +27,27 @@ const medicationGet = async (req, res) => {
   res.send({ medications: info });
 };
 
-module.exports = { medicationGet };
+const medicationGetDoctor = async (req, res) => {
+  const { phone_number } = req.body;
+  const medications = await medication.findAll({
+    where: {
+      PatientPhoneNumber: phone_number,
+    },
+    raw: true,
+  });
+  const info = await Promise.all(
+    medications.map(async (med) => {
+      const extraInfo = medicineInfos[med.drug] || {};
+      const records = await record.findAll({
+        where: {
+          MedicationId: med.id,
+        },
+        raw: true,
+      });
+      return { ...med, extraInfo, records };
+    })
+  );
+  res.send({ medications: info });
+};
+
+module.exports = { medicationGet, medicationGetDoctor };

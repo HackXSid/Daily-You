@@ -17,7 +17,7 @@ const SharedStorage = NativeModules.SharedStorage;
 
 const DailyYouScreen = ({ logout }) => {
   const authReducer = useSelector(state => state.authenticationReducer);
-  const { user } = authReducer;
+  const { user, token } = authReducer;
   const sendFcmToken = async () => {
     try {
       await messaging().registerDeviceForRemoteMessages();
@@ -88,7 +88,9 @@ const DailyYouScreen = ({ logout }) => {
                 <Ionicons name="settings" color={color} size={size} />
               ),
             }}>
-            {props => <Settings {...props} logout={logout} />}
+            {props => (
+              <Settings {...props} logout={logout} user={user} token={token} />
+            )}
           </Tab.Screen>
         </Tab.Navigator>
       </NavigationContainer>

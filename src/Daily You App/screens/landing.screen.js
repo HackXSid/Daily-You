@@ -66,8 +66,6 @@ const Landing = ({ login }) => {
   const [password, setPassword] = useState('');
   const [screen, setScreen] = useState('Login');
 
-  if (screen === 'SignUp') return <SignUp goBack={() => setScreen('Login')} />;
-
   const doLogin = async () => {
     const data = { phone, password };
     try {
@@ -91,6 +89,8 @@ const Landing = ({ login }) => {
       }),
     );
   }, []);
+
+  if (screen === 'SignUp') return <SignUp goBack={() => setScreen('Login')} />;
 
   return (
     <>
